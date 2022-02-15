@@ -74,7 +74,10 @@ def query():
         query_obj = create_query("*", [], sort, sortDir)
 
     print("query obj: {}".format(query_obj))
-    response = None   # TODO: Replace me with an appropriate call to OpenSearch
+    response = opensearch.search(
+            body = query_obj,
+            index = 'bbuy_products'
+        )
     # Postprocess results here if you so desire
 
     #print(response)
@@ -91,10 +94,54 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
     query_obj = {
         'size': 10,
         "query": {
-            "match_all": {} # Replace me with a query that both searches and filters
+           'multi_match': {
+              'query': user_query,
+              'fields': ["name^100", "shortDescription^50", "longDescription^10", "department"]
+            }
         },
+
         "aggs": {
-            #TODO: FILL ME IN
+            "regularPrice": {
+                    "range": {
+                        "field": "regularPrice",
+                        #"keyed": True,
+                        "ranges": [
+                            {
+                                "key": "$",
+                                "to": 10
+                            },
+                            {
+                                "key": "$$",
+                                "from": 10,
+                                "to": 50
+                            },
+                            {
+                                "key": "$$$",
+                                "from": 50,
+                                "to": 300
+                            },
+                            {
+                                "key": "$$$$",
+                                "from": 300                    
+                            }
+                        ]
+                    }
+                },
+            "department": {
+                        "terms": {
+                            "field": "department.keyword",
+                            "size": 10,
+                            "missing": "N/A",
+                            "min_doc_count": 0
+                        }
+            },
+            "missing_images": {
+                       "filter": {
+                        "term": {
+                        "active": True
+                    }
+                }
+            }
         }
     }
     return query_obj
