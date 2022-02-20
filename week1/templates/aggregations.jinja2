@@ -1,5 +1,6 @@
 <div id="aggregations">
-  {% if search_response.aggregations%}<div class="aggregations-result">
+  {% if search_response.aggregations%}
+      <div class="aggregations-result">
     <div class="agg-header">Price</div>
     {% if "filter.name=regularPrice" not in applied_filters %}
       {% for agg in search_response.aggregations.regularPrice.buckets %}
@@ -20,13 +21,14 @@
       {% endfor %}
     {% endif %}
   </div>
-  <div class="agg-header">Department</div>
+      <div class="aggregations-result">
+      <div class="agg-header">Department</div>
     {% if "filter.name=department" not in applied_filters %}
       {% for agg in search_response.aggregations.department.buckets %}
         {% if agg.doc_count > 0 %}
           <div class="aggregation">
-            <div><a>
-                
+            <div><a
+                    href="{{ url_for("search.query") }}?&query={{ query|e }}{{ applied_filters }}&filter.name=department&department.type=terms&department.key={{ agg.key }}&department.displayName=Department">{{ agg.key }} : {{ agg.doc_count }}
                 </a>
             </div>
           </div>{% endif %}

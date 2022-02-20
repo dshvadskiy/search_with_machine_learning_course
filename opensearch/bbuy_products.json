@@ -3,14 +3,32 @@
     "index.refresh_interval": "5s",
     "analysis": {
       "analyzer": {
-        "my_analyzer": {
+        "unique_analyzer": {
           "tokenizer": "whitespace",
           "filter": [
             "lowercase",
-            "porter_stem"
+            "porter_stem",
+            "unique"
           ]
+        },
+        "trigram": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase","shingle"]
+          },
+          "reverse": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase","reverse"]
+          }
+      },
+      "filter": {
+          "shingle": {
+            "type": "shingle",
+            "min_shingle_size": 2,
+            "max_shingle_size": 3
+          }
         }
-      }
     }
   },
   "mappings" : {
@@ -219,7 +237,7 @@
       },
       "longDescription" : {
         "type" : "text",
-        "analyzer": "my_analyzer",
+        "analyzer": "english",
         "fields" : {
           "keyword" : {
             "type" : "keyword",
@@ -256,11 +274,26 @@
       },
       "name" : {
         "type" : "text",
-        "analyzer": "my_analyzer",
+        "analyzer": "english",
         "fields" : {
           "keyword" : {
             "type" : "keyword",
             "ignore_above" : 256
+          },
+          "suggest": {
+            "type": "completion"
+          },
+          "trigram": {
+            "type": "text",
+            "analyzer": "trigram"
+          },
+          "reverse": {
+            "type": "text",
+            "analyzer": "reverse"
+          },
+          "unique": {
+            "type": "text",
+            "analyzer": "unique_analyzer"
           }
         }
       },
@@ -318,7 +351,7 @@
       },
       "shortDescription" : {
         "type" : "text",
-        "analyzer": "my_analyzer",
+        "analyzer": "english",
         "fields" : {
           "keyword" : {
             "type" : "keyword",

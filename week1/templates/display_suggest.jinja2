@@ -1,0 +1,18 @@
+<div id="did-you-mean">
+  {% for options in search_response.suggest.simple_phrase %}
+    {% for suggest in options.options %}
+
+{#    <div class="search-result search-result-{{ loop.cycle('odd', 'even') }}">#}
+{#    </div>#}
+      <table>
+      <tr>
+        <td>
+         <div>
+        <a href="{{ url_for("search.query") }}?&query={{ suggest.text|e }}"> {{ suggest.text }} </a>
+          </div>
+        </td>
+      </tr>
+      </table>
+    {% endfor %}
+   {% endfor %}
+</div>

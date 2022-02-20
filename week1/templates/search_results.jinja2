@@ -5,7 +5,12 @@
 {% endblock %}
 
 {% block content %}
-  <div id="did-you-mean">DYM goes here</div>
+  <div id="did-you-mean">
+     {% if search_response and search_response.suggest%}
+         <h4>Suggestions</h4>
+        <div>{% include 'display_suggest.jinja2' %}</div>
+     {% endif %}
+  </div>
   {% if display_filters%}
     <div id="applied-filters">{% include 'display_filters.jinja2' %}</div>
   {% endif %}

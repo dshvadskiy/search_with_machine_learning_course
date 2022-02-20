@@ -1,0 +1,47 @@
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "bool": {
+          "must": {
+            "query_string": {
+              "query": "#$query##",
+              "fields": [
+                "name^100",
+                "shortDescription^20",
+                "longDescription^10",
+                "department"
+              ]
+            }
+          },
+          "filter": []
+        }
+      },
+      "boost_mode": "multiply",
+      "score_mode": "avg",
+      "functions": [
+        {
+          "field_value_factor": {
+            "field": "salesRankShortTerm",
+            "modifier": "reciprocal",
+            "missing": 1000000000
+          }
+        },
+        {
+          "field_value_factor": {
+            "field": "salesRankLongTerm",
+            "modifier": "reciprocal",
+            "missing": 1000000000
+          }
+        },
+        {
+          "field_value_factor": {
+            "field": "salesRankMediumTerm",
+            "modifier": "reciprocal",
+            "missing": 1000000000
+          }
+        }
+      ]
+    }
+  }
+}
